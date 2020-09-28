@@ -26,6 +26,8 @@ public class Users extends Resource {
     public static final String ONE_CODE_CALL_PATH = "/protected/json/call/";
     public static final String USER_STATUS_PATH = "/protected/json/users/%d/status";
     public static final String DEFAULT_COUNTRY_CODE = "1";
+    /* Added for sending email tokens */
+    public static final String EMAIL_PATH = "/protected/json/email/";
 
     public Users(String uri, String key) {
         super(uri, key, Resource.JSON_CONTENT_TYPE);
@@ -103,6 +105,31 @@ public class Users extends Resource {
     public Hash requestCall(int userId, Map<String, String> options) throws AuthyException {
         MapToResponse opt = new MapToResponse(options);
         final Response response = this.get(ONE_CODE_CALL_PATH + Integer.toString(userId), opt);
+        return instanceFromJson(response.getStatus(), response.getBody());
+    }
+    
+    /**
+     * Send token via email to a user.
+     * 
+     * @param userId
+     * @return
+     * @throws AuthyException
+     */
+    public Hash requestEmail(int userId) throws AuthyException {
+        return requestEmail(userId, new HashMap<>(0));
+    }
+    
+    /**
+     * Send token via email to a user which some options defined.
+     * 
+     * @param userId
+     * @param options
+     * @return
+     * @throws AuthyException
+     */
+    public Hash requestEmail(int userId, Map<String, String> options) throws AuthyException {
+        MapToResponse opt = new MapToResponse(options);
+        final Response response = this.post(EMAIL_PATH + Integer.toString(userId), opt);
         return instanceFromJson(response.getStatus(), response.getBody());
     }
 
